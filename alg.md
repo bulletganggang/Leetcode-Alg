@@ -6,7 +6,7 @@
 
 
 
-## 数组 & 字符串
+## 数组 & 字符串 & 双指针
 
 
 
@@ -568,4 +568,53 @@ var reverseWords = function(s) {
 ```
 
 
+
+### 两数之和
+
+[1. 两数之和 - 力扣（LeetCode）](https://leetcode.cn/problems/two-sum/description/)
+
+唯一真神，记得大一第一次遇见的时候写都写不出来哈哈
+
+
+
+方法有很多，这里采取哈希表map
+
+```js
+var twoSum = function(nums, target) {
+  const map = new Map()
+  for (const i in nums) {
+    if (map.has(nums[i])) {
+      return [map.get(nums[i]),i]
+    }
+    map.set(target - nums[i], i)
+  }
+};
+```
+
+
+
+### 验证回文串
+
+[125. 验证回文串 - 力扣（LeetCode）](https://leetcode.cn/problems/valid-palindrome/description/?envType=study-plan-v2&envId=top-interview-150)
+
+
+
+最使用api的一集，核心就是一句话，去除首位空格，字符串全部小写，转为数组，再去除不是字母数字的字符，然后使用左右双指针即可
+
+```js
+var isPalindrome = function(s) {
+  s = s.trim().toLowerCase().split('').filter(ele => (ele <= 'Z' && ele >= 'A') || (ele <= 'z' && ele >= 'a') || (ele <= '9' && ele >= '0'))
+  let l = 0, r = s.length -1
+  while(l <= r)
+  {
+    if (s[l] === s[r]) {
+      l++
+      r--
+    } else {
+      return false
+    }
+  }
+  return true
+};
+```
 
