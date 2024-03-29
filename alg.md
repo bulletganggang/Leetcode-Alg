@@ -618,3 +618,56 @@ var isPalindrome = function(s) {
 };
 ```
 
+
+
+### 判断子序列
+
+[392. 判断子序列 - 力扣（LeetCode）](https://leetcode.cn/problems/is-subsequence/description/?envType=study-plan-v2&envId=top-interview-150)
+
+
+
+继续双指针，一开始还以为是最长公共子序列，但发现问题在于s是不是t的子序列，s的长度<=t的长度，那一次遍历即可
+
+```js
+var isSubsequence = function(s, t) {
+  let i = 0, j = 0
+  while(j < t.length)
+  {
+      if(s[i] === t[j]) i++
+      j++
+  }
+  return i === s.length
+};
+```
+
+
+
+### 两数之和 II - 输入有序数组
+
+[167. 两数之和 II - 输入有序数组 - 力扣（LeetCode）](https://leetcode.cn/problems/two-sum-ii-input-array-is-sorted/description/?envType=study-plan-v2&envId=top-interview-150)
+
+
+
+感觉比两数之和还简单，因为是有序的，所以使用左右指针即可，而且人家刚好也要求常数级的额外空间，不能使用map之类的数据结构
+
+```js
+var twoSum = function(numbers, target) {
+  let l = 0, r = numbers.length - 1
+  while(l < r)
+  {
+    if (numbers[l] + numbers[r] === target) {
+      return [l+1, r+1]
+    } else if (numbers[l] + numbers[r] < target) {
+      l++
+    } else {
+      r--
+    }
+  }
+};
+```
+
+
+
+2024/3/29
+
+朋友们，入职腾讯了，短时间内估计不会再刷题了，咱们有缘再见
