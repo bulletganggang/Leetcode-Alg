@@ -3,6 +3,6 @@ var majorityElement = function (nums) {
   return nums[Math.floor(nums.length / 2)];
 };
 
-const nums = [2,2,1,1,1,2,2]
+const nums = [2, 2, 1, 1, 1, 2, 2];
 
-console.log(majorityElement(nums))
+console.log(majorityElement(nums));

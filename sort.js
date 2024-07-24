@@ -1,87 +1,80 @@
-const sortArr = [5, 1, 9, 3, 7, 2, 10, 4, 8, 6]
-const binarySearchArr = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
+const sortArr = [5, 1, 9, 3, 7, 2, 10, 4, 8, 6];
+const binarySearchArr = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
 
 // 插入排序
 // 外层一个for循环，对每个值，都与前面已经排序好的值相比，找到合适的位置插入
 function InsertSort(arr) {
   for (let i = 1; i < arr.length; i++) {
-    const x = arr[i]
-    let j = i-1   //可以发现arr[j+1]永远都是x应该插入的位置
-    while (j>=0) {
+    const x = arr[i];
+    let j = i - 1; //可以发现arr[j+1]永远都是x应该插入的位置
+    while (j >= 0) {
       // x比前面的数小，往前面走
-      if (x<arr[j]) {
-        arr[j+1]=arr[j]
-        j--
-      }
-      else break
+      if (x < arr[j]) {
+        arr[j + 1] = arr[j];
+        j--;
+      } else break;
     }
     // 找到合适的位置，插入
-    arr[j+1] = x
+    arr[j + 1] = x;
   }
-  console.log('InsertSort',arr);
+  console.log("InsertSort", arr);
 }
 
 // InsertSort(sortArr)
 
-
 // 希尔排序
 // 交换交换
-function ShellSort(arr,n) {
-  let gap = n
-  while(gap>1)
-  {
-    gap=parseInt(gap/2)
-    for (let i = 0; i < n-gap; i++) {
-      if (arr[i]>arr[i+gap]) {
-        [arr[i],arr[i+gap]] = [arr[i+gap],arr[i]] 
+function ShellSort(arr, n) {
+  let gap = n;
+  while (gap > 1) {
+    gap = parseInt(gap / 2);
+    for (let i = 0; i < n - gap; i++) {
+      if (arr[i] > arr[i + gap]) {
+        [arr[i], arr[i + gap]] = [arr[i + gap], arr[i]];
       }
     }
   }
-  console.log('ShellSort',arr);
+  console.log("ShellSort", arr);
 }
 
 // ShellSort(sortArr,10)
-
 
 // 选择排序
 // 外层一个for循环，每次都让最小值插入当前位置
 // 内层一个for循环，每次都找到最小值
 function SelectSort(arr) {
-  for (let i = 0; i < arr.length -1 ; i++) {
+  for (let i = 0; i < arr.length - 1; i++) {
     // 定义当前下标
-    let min = i
-    for (let j = i+1; j < arr.length; j++) {
+    let min = i;
+    for (let j = i + 1; j < arr.length; j++) {
       // 找出最小值的下标
-      if (arr[j]<arr[min]) min=j
+      if (arr[j] < arr[min]) min = j;
     }
     // 将当前下标和最小值下标交换，保证升序
-    if (min!==i) [arr[i],arr[min]] = [arr[min],arr[i]] 
+    if (min !== i) [arr[i], arr[min]] = [arr[min], arr[i]];
   }
-  console.log('SelectSort',arr);
+  console.log("SelectSort", arr);
 }
 
 // SelectSort(sortArr)
 
-
 // 冒泡排序
 // 左右两边对比交换
 function BubbleSort(arr) {
-  for (let i = 0; i < arr.length-1; i++) {
-    let flag = 0
-    for (let j = 0; j < arr.length -1 -i; j++) {
-      if (arr[j]>arr[j+1])
-      {
-        [arr[j+1],arr[j]] = [arr[j],arr[j+1]] 
-        flag=1
+  for (let i = 0; i < arr.length - 1; i++) {
+    let flag = 0;
+    for (let j = 0; j < arr.length - 1 - i; j++) {
+      if (arr[j] > arr[j + 1]) {
+        [arr[j + 1], arr[j]] = [arr[j], arr[j + 1]];
+        flag = 1;
       }
     }
-    if (!flag) break
+    if (!flag) break;
   }
-  console.log('BubbleSort',arr);
+  console.log("BubbleSort", arr);
 }
 
 // BubbleSort(sortArr)
-
 
 // 快排
 function quickSort(array) {
@@ -113,7 +106,6 @@ function quickSort(array) {
 }
 
 // console.log(quickSort(sortArr))
-
 
 // 二分查找
 function binarySearch(array, target) {

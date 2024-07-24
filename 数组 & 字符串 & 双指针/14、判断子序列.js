@@ -1,13 +1,14 @@
-var isSubsequence = function(s, t) {
-  let i = 0, j = 0
-  while(j < t.length)
-  {
-      if(s[i] === t[j]) i++
-      j++
+var isSubsequence = function (s, t) {
+  let i = 0,
+    j = 0;
+  while (j < t.length) {
+    if (s[i] === t[j]) i++;
+    j++;
   }
-  return i === s.length
+  return i === s.length;
 };
 
-const s = "abc", t = "ahbgdc"
+const s = "abc",
+  t = "ahbgdc";
 
-console.log(isSubsequence(s, t))
+console.log(isSubsequence(s, t));
