@@ -582,6 +582,118 @@ var twoSum = function (numbers, target) {
 };
 ```
 
+---
+
 2024/3/29
 
 朋友们，入职腾讯了，短时间内估计不会再刷题了，咱们有缘再见
+
+---
+
+### 长度最小的子数组
+
+[209. 长度最小的子数组 - 力扣（LeetCode）](https://leetcode.cn/problems/minimum-size-subarray-sum/description/?envType=study-plan-v2&envId=top-interview-150)
+
+标准的滑动窗口题目
+当窗口内的数大了，将当前窗口的大小和最小窗口值比较替换，同时缩小窗口
+当窗口内的数小了，就扩大窗口
+
+```js
+var minSubArrayLen = function (target, nums) {
+  let minLen = Infinity;
+  let curSum = 0;
+  const curArr = [];
+  for (const num of nums) {
+    curArr.push(num);
+    curSum += num;
+    while (curSum >= target) {
+      minLen = Math.min(minLen, curArr.length);
+      const firstNum = curArr.shift();
+      curSum -= firstNum;
+    }
+  }
+  return minLen === Infinity ? 0 : minLen;
+};
+```
+
+### 无重复字符的最长子串
+
+[3. 无重复字符的最长子串 - 力扣（LeetCode）](https://leetcode.cn/problems/longest-substring-without-repeating-characters/description/?envType=study-plan-v2&envId=top-interview-150)
+
+做了两题感觉要有个公式模板了
+一个滑动窗口，一个 for 循环，在 for 循环中判断当前字符是否在滑动窗口内，**如果在就一直删除第一个字符，直到滑动窗口中没有当前字符**，不在就添加
+需要注意的是判断的时机，以及记录最大/小的值的时候
+
+```js
+var lengthOfLongestSubstring = function (s) {
+  let curS = "";
+  let max = 0;
+
+  for (const str of s) {
+    while (curS.indexOf(str) !== -1) {
+      curS = curS.slice(1);
+    }
+    curS += str;
+    max = Math.max(max, curS.length);
+  }
+  return max;
+};
+```
+
+### 最小覆盖子串
+
+[76. 最小覆盖子串 - 力扣（LeetCode）](https://leetcode.cn/problems/minimum-window-substring/description/?envType=study-plan-v2&envId=top-interview-150)
+
+很棒，第一次靠自己做出了困难题，但是也可以看出来，滑动窗口是有套路的，讲下做题思路吧
+
+首先一个 tMap 存储 t 中所有出现的字符，然后就是经典套路 for 循环，判断当前字符是否在 t 中出现，当然这题难一点情况复杂一点，需要操作 tMap
+如果出现，那么就在 tMap 中将这个数的数量-1，如果不出现，就不管
+
+然后就是经典套路 while 循环，判断当前滑动窗口是否含有所有的字符，这里判断依靠的是 tMap 中的数是不是都小于等于 0，是的话说明已经全部出现过了，此时就不断缩小窗口，直到 tMap 中存在数大于 0
+
+所以其实一套流程下来，可以发现套路还是挺明显的，for + while 循环，全部出现就缩小窗口，否则就扩大窗口
+
+```js
+var minWindow = function (s, t) {
+  if (t.length > s.length) {
+    return "";
+  }
+
+  const tMap = new Map();
+  let curStr = "";
+  let minStr = "";
+
+  for (const str of t) {
+    tMap.set(str, tMap.get(str) + 1 || 1);
+  }
+
+  for (const str of s) {
+    curStr += str;
+    if (t.indexOf(str) !== -1) {
+      tMap.set(str, tMap.get(str) - 1);
+    }
+
+    // 找出当前滑动窗口是否含有所有的字符
+    while (isAllIn(tMap)) {
+      if (!minStr || minStr.length > curStr.length) {
+        minStr = curStr;
+      }
+      const str = curStr[0];
+      if (t.indexOf(str) !== -1) {
+        tMap.set(str, tMap.get(str) + 1);
+      }
+      curStr = curStr.slice(1);
+    }
+  }
+  return minStr;
+};
+
+const isAllIn = (tMap) => {
+  for (const t of tMap) {
+    if (t[1] > 0) {
+      return false;
+    }
+  }
+  return true;
+};
+```
