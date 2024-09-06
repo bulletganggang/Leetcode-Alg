@@ -582,13 +582,46 @@ var twoSum = function (numbers, target) {
 };
 ```
 
----
+### 验证回文串 II
 
-2024/3/29
+[LCR 019. 验证回文串 II](https://leetcode.cn/problems/RQku0D/description/)
+有点不知道这是 dp 还是贪心，核心思路就是
 
-朋友们，入职腾讯了，短时间内估计不会再刷题了，咱们有缘再见
+1. 设定左右指针，将二者分别指向字符串的两边。
+2. 依次比较左右指针对应的字符是否相等。
+   - 如果相等，继续比较剩下的字符。
+   - 如果不相等，则分两种情况，只要有一种情况是回文字符串即可：
+     - 删除左边的 left 指针指向的元素，判断 s[left+1, right] 是否回文。
+     - 删除右边的 right 指针指向的元素，判断 s[left, right-1] 是否回文。
 
----
+```js
+var validPalindrome = function (s) {
+  let left = 0,
+    right = s.length - 1;
+  while (left < right) {
+    if (s[left] !== s[right]) {
+      return (
+        isPalindrome(s, left + 1, right) || isPalindrome(s, left, right - 1)
+      );
+    } else {
+      left++;
+      right--;
+    }
+  }
+  return true;
+};
+
+const isPalindrome = (s, l, r) => {
+  while (l < r) {
+    if (s[l++] !== s[r--]) {
+      return false;
+    }
+  }
+  return true;
+};
+```
+
+## 滑动窗口
 
 ### 长度最小的子数组
 
