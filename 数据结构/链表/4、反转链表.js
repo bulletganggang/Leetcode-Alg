@@ -13,7 +13,7 @@ var reverseList = function (head) {
   if (head === null || head.next === null) {
     return head;
   }
-  const last = traverse(head.next);
+  const last = reverseList(head.next);
   head.next.next = head;
   head.next = null;
   return last;

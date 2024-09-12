@@ -621,6 +621,40 @@ const isPalindrome = (s, l, r) => {
 };
 ```
 
+### 三数之和
+
+这是个很棒的题，使用的是双指针＋排序
+
+题目说不要求返回数组的顺序，所以思路是，首先对数组进行排序，一个 for 循环遍历，两个指针在 for 循环的数组区间内不断进行两数之和运算
+
+```js
+var threeSum = function (nums) {
+  nums = nums.sort((a, b) => a - b);
+  const res = [];
+  for (const key in nums) {
+    const value = nums[key];
+    if (value > 0) break;
+    if (value === nums[key - 1]) continue;
+
+    let i = parseInt(key) + 1,
+      j = nums.length - 1;
+    while (i < j) {
+      if (nums[i] + nums[j] + value === 0) {
+        res.push([nums[i], nums[j], value]);
+        i++, j--;
+        while (nums[i] === nums[i - 1]) i++;
+        while (nums[j] === nums[j + 1]) j--;
+      } else if (nums[i] + nums[j] + value < 0) {
+        i++;
+      } else {
+        j--;
+      }
+    }
+  }
+  return res;
+};
+```
+
 ## 滑动窗口
 
 ### 长度最小的子数组
@@ -728,5 +762,499 @@ const isAllIn = (tMap) => {
     }
   }
   return true;
+};
+```
+
+## 哈希表
+
+### 同构字符串 & 单词规律
+
+[205. 同构字符串 - 力扣（LeetCode）](https://leetcode.cn/problems/isomorphic-strings/description/?envType=study-plan-v2&envId=top-interview-150)
+
+[290. 单词规律 - 力扣（LeetCode）](https://leetcode.cn/problems/word-pattern/description/?envType=study-plan-v2&envId=top-interview-150)
+
+两题很类似，放一起了，根本思想就是，**一一对应**
+
+既然要一一对应，那我 map 中的 kv 就对应着两个字符串的值不就好了？
+
+如果遍历过程中，遇到了已经有 v 的，说明之前遍历的时候就遇到并且存储了下来
+
+那如果新遇到的 v 和存储的 v 不一样就说明不是一一对应，直接返回 false 即可，如果一样就没问题
+
+单词的也差不多，split 一下变为数组，再继续一一对应
+
+```javascript
+var isIsomorphic = function (s, t) {
+  const sMap = new Map();
+  const tMap = new Map();
+  for (const key in s) {
+    if (sMap.has(s[key])) {
+      if (sMap.get(s[key]) !== t[key]) return false;
+    }
+    sMap.set(s[key], t[key]);
+  }
+  for (const key in t) {
+    if (tMap.has(t[key])) {
+      if (tMap.get(t[key]) !== s[key]) return false;
+    }
+    tMap.set(t[key], s[key]);
+  }
+  return true;
+};
+
+var wordPattern = function (s, t) {
+  const sMap = new Map();
+  const tMap = new Map();
+  t = t.split(" ");
+  if (s.length !== t.length) return false;
+  for (const key in s) {
+    if (sMap.has(s[key])) {
+      if (sMap.get(s[key]) !== t[key]) return false;
+    }
+    sMap.set(s[key], t[key]);
+  }
+  for (const key in t) {
+    if (tMap.has(t[key])) {
+      if (tMap.get(t[key]) !== s[key]) return false;
+    }
+    tMap.set(t[key], s[key]);
+  }
+  console.log(sMap, tMap);
+  return true;
+};
+```
+
+## 模拟
+
+### 比较版本号
+
+[165. 比较版本号 - 力扣（LeetCode）](https://leetcode.cn/problems/compare-version-numbers/description/)
+
+感觉像是前端笔试或者面试会遇到的题，毕竟感觉和前端关系还挺大的
+
+细节注意，有可能版本号长度不一样，少的补 0，得到的是字符，比较的话要转为数字
+
+```js
+var compareVersion = function (version1, version2) {
+  const v1 = version1.split(".");
+  const v2 = version2.split(".");
+  const maxLen = Math.max(v1.length, v2.length);
+  while (v1.length < maxLen) {
+    v1.push("0");
+  }
+  while (v2.length < maxLen) {
+    v2.push("0");
+  }
+  for (const key in v1) {
+    const val1 = parseInt(v1[key]);
+    const val2 = parseInt(v2[key]);
+    if (val1 > val2) {
+      return 1;
+    } else if (val1 < val2) {
+      return -1;
+    }
+  }
+  return 0;
+};
+```
+
+### 分发糖果
+
+[135. 分发糖果 - 力扣（LeetCode）](https://leetcode.cn/problems/candy/description/?envType=study-plan-v2&envId=top-interview-150)
+
+贪心算法，前后两次遍历，从前往后遍历的时候，得到第二个数比第一个数大的话，应该获得多少糖果，此次忽略了第三个数
+
+从后往前遍历的时候，得到第二个数比第三个数大的话，应该获得多少糖果，左右两边情况都考虑到了
+
+此时获取前后两个数组的数取 max 即可
+
+```js
+var candy = function (ratings) {
+  const left = [],
+    right = [];
+  let res = 0;
+
+  for (const key in ratings) {
+    if (!key) left.push(1);
+    if (ratings[key] > ratings[key - 1]) {
+      left.push(left[key - 1] + 1);
+    } else {
+      left.push(1);
+    }
+  }
+
+  for (const key in ratings.reverse()) {
+    if (!key) right.push(1);
+    if (ratings[key] > ratings[key - 1]) {
+      right.push(right[key - 1] + 1);
+    } else {
+      right.push(1);
+    }
+  }
+  right.reverse();
+
+  for (const key in left) {
+    res += Math.max(left[key], right[key]);
+  }
+  return res;
+};
+```
+
+# 数据结构
+
+## 栈
+
+### 有效的括号
+
+[20. 有效的括号 - 力扣（LeetCode）](https://leetcode.cn/problems/valid-parentheses/description/)
+
+经典又熟悉的题目呀，使用栈就能解决，注意下最后返回的条件，stack 为空就行了
+
+```js
+var isValid = function (s) {
+  const stack = [];
+  for (const value of s) {
+    if (value === "(" || value === "{" || value === "[") {
+      stack.push(value);
+    } else {
+      const pop = stack.pop();
+      if (
+        (value === ")" && pop !== "(") ||
+        (value === "]" && pop !== "[") ||
+        (value === "}" && pop !== "{")
+      ) {
+        return false;
+      }
+    }
+  }
+  return !stack.length;
+};
+```
+
+### 最小栈
+
+[155. 最小栈 - 力扣（LeetCode）](https://leetcode.cn/problems/min-stack/description/?envType=study-plan-v2&envId=top-interview-150)
+
+也不难，使用另外一个栈辅助即可，专门用来存放每次 push 进来的时候**当前栈的最小值**
+
+```js
+var MinStack = function () {
+  this.stack = [];
+  this.minStack = [];
+};
+
+/**
+ * @param {number} val
+ * @return {void}
+ */
+MinStack.prototype.push = function (val) {
+  this.stack.push(val);
+  if (!this.minStack.length) {
+    this.minStack.push(val);
+  } else {
+    const min = this.minStack.at(-1);
+    this.minStack.push(Math.min(min, val));
+  }
+};
+
+/**
+ * @return {void}
+ */
+MinStack.prototype.pop = function () {
+  this.stack.pop();
+  this.minStack.pop();
+};
+
+/**
+ * @return {number}
+ */
+MinStack.prototype.top = function () {
+  return this.stack.at(-1);
+};
+
+/**
+ * @return {number}
+ */
+MinStack.prototype.getMin = function () {
+  return this.minStack.at(-1);
+};
+
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * var obj = new MinStack()
+ * obj.push(val)
+ * obj.pop()
+ * var param_3 = obj.top()
+ * var param_4 = obj.getMin()
+ */
+```
+
+### 逆波兰表达式求值
+
+[150. 逆波兰表达式求值 - 力扣（LeetCode）](https://leetcode.cn/problems/evaluate-reverse-polish-notation/description/?envType=study-plan-v2&envId=top-interview-150)
+
+也不难，每次遇到符号的时候，就把栈顶的两个数取出来计算，需要注意的地方可能就是**向零截断** ，意思是小于 0 的时候要用 ceil，大于 0 的时候要用 floor
+
+```js
+var evalRPN = function (tokens) {
+  const stack = [];
+  const type = ["+", "-", "*", "/"];
+  for (const token of tokens) {
+    if (!type.includes(token)) {
+      stack.push(token);
+    } else {
+      if (stack.length >= 2) {
+        const b = stack.pop();
+        const a = stack.pop();
+        const res = cal(a, b, token);
+        stack.push(res);
+      } else {
+        return 0;
+      }
+    }
+  }
+  return stack[0];
+};
+
+const cal = (a, b, type) => {
+  switch (type) {
+    case "+":
+      return parseInt(a) + parseInt(b);
+    case "-":
+      return parseInt(a) - parseInt(b);
+    case "*":
+      return parseInt(a) * parseInt(b);
+    case "/":
+      const res = parseInt(a) / parseInt(b);
+      return res >= 0 ? Math.floor(res) : Math.ceil(res);
+    default:
+      break;
+  }
+};
+```
+
+## 链表
+
+### 环形链表
+
+[141. 环形链表 - 力扣（LeetCode）](https://leetcode.cn/problems/linked-list-cycle/description/?envType=study-plan-v2&envId=top-interview-150)
+
+快慢指针，快指针走两步，慢指针走一步，快指针 !== null 的时候和慢指针相遇，就说明有环
+
+```js
+var hasCycle = function (head) {
+  let fast = head,
+    slow = head;
+  while (fast !== null && fast.next !== null) {
+    fast = fast.next.next;
+    slow = slow.next;
+    if (slow === fast) return true;
+  }
+  return false;
+};
+```
+
+### 合并两个有序链表
+
+[21. 合并两个有序链表 - 力扣（LeetCode）](https://leetcode.cn/problems/merge-two-sorted-lists/description/?envType=study-plan-v2&envId=top-interview-150)
+
+感觉链表有个很麻烦的点，就在于需要用个虚拟头节点 dummy，进行一些奇奇怪怪的操作
+
+这题也不难，双指针，哪个小放哪个，等某个链表全放完了可能另一个链表还有数并且都是大的，就全部放进去
+
+```js
+var mergeTwoLists = function (list1, list2) {
+  let head1 = list1,
+    head2 = list2;
+  let dummy = new ListNode(-1),
+    list = dummy;
+  while (head1 !== null && head2 !== null) {
+    if (head1.val < head2.val) {
+      list.next = head1;
+      head1 = head1.next;
+    } else {
+      list.next = head2;
+      head2 = head2.next;
+    }
+    list = list.next;
+  }
+  if (head1 !== null) {
+    list.next = head1;
+  }
+  if (head2 !== null) {
+    list.next = head2;
+  }
+  return dummy.next;
+};
+```
+
+### 两数相加
+
+[2. 两数相加 - 力扣（LeetCode）](https://leetcode.cn/problems/add-two-numbers/description/?envType=study-plan-v2&envId=top-interview-150)
+
+这题也不难，思路基本都是对的，想着是，n1 n2 都在的时候，一起加，某个链表走到尽头的时候，另外一个链表可能还有值，就拿着进位数 t 继续加，当然还有更加简便的写法，我这么写属实看上去复杂了
+
+这里特别需要注意的是`list.next = new ListNode(p)`给这个坑死了，一开始没有创建 node 节点导致一直报错，next 需要为一个 node 节点，所以应该拿着 p 去注册 node，再进行绑定
+
+```js
+var addTwoNumbers = function (l1, l2) {
+  let n1 = l1,
+    n2 = l2;
+  let dummy = new ListNode(-1),
+    list = dummy;
+  let p = 0,
+    t = 0;
+
+  while (n1 !== null && n2 !== null) {
+    p = (n1.val + n2.val + t) % 10;
+    t = Math.floor((n1.val + n2.val + t) / 10);
+    n1 = n1.next;
+    n2 = n2.next;
+    list.next = new ListNode(p);
+    list = list.next;
+  }
+  while (n1 !== null) {
+    p = (n1.val + t) % 10;
+    t = Math.floor((n1.val + t) / 10);
+    n1 = n1.next;
+    list.next = new ListNode(p);
+    list = list.next;
+  }
+  while (n2 !== null) {
+    p = (n2.val + t) % 10;
+    t = Math.floor((n2.val + t) / 10);
+    n2 = n2.next;
+    list.next = new ListNode(p);
+    list = list.next;
+  }
+  if (t) {
+    const node = new ListNode(t);
+    list.next = node;
+  }
+  return dummy.next;
+};
+```
+
+### 反转链表
+
+[206. 反转链表 - 力扣（LeetCode）](https://leetcode.cn/problems/reverse-linked-list/description/)
+
+这个特别像二叉树的后序遍历，应该是一样的思想，后序遍历可以拿着最新的节点的值，来完成一些操作
+
+这里我们就一直遍历，遍历到链表结尾的前一个，然后开始做某些操作
+
+1. node.next.next = node，也就是链表结尾指向链表结尾的前一个，我们这里就完成了前一个数指向的改变
+2. node.next = null，让链表结尾的前一个指向为空，而不是指向链表结尾，避免成环
+
+![](assets\反转链表1.jpg)
+![](assets\反转链表2.jpg)
+
+```js
+var reverseList = function (head) {
+  if (head === null || head.next === null) {
+    return head;
+  }
+  const last = reverseList(head.next);
+  head.next.next = head;
+  head.next = null;
+  return last;
+};
+```
+
+### 反转链表 II
+
+[92. 反转链表 II - 力扣（LeetCode）](https://leetcode.cn/problems/reverse-linked-list-ii/solutions/634701/fan-zhuan-lian-biao-ii-by-leetcode-solut-teyq/?envType=study-plan-v2&envId=top-interview-150)
+
+反转链表某一部分，就记录下 pre，succ，然后把 pre.next 拿去反转一下，再将反转过后的链表和 pre，succ 连接一下，为了记录反转链表的头尾，还会用到 left 和 right 节点
+
+咋说呢，感觉思路不难，但是实现起来一些细节挺困难麻烦的
+
+![](assets\反转链表 II.png)
+
+```js
+var reverseBetween = function (head, left, right) {
+  // 因为头节点有可能发生变化，使用虚拟头节点可以避免复杂的分类讨论
+  const dummyNode = new ListNode(-1);
+  dummyNode.next = head;
+
+  let pre = dummyNode;
+  // 第 1 步：从虚拟头节点走 left - 1 步，来到 left 节点的前一个节点
+  // 建议写在 for 循环里，语义清晰
+  for (let i = 0; i < left - 1; i++) {
+    pre = pre.next;
+  }
+
+  // 第 2 步：从 pre 再走 right - left + 1 步，来到 right 节点
+  let rightNode = pre;
+  for (let i = 0; i < right - left + 1; i++) {
+    rightNode = rightNode.next;
+  }
+
+  // 第 3 步：切断出一个子链表（截取链表）
+  let leftNode = pre.next;
+  let curr = rightNode.next;
+
+  // 注意：切断链接
+  pre.next = null;
+  rightNode.next = null;
+
+  // 第 4 步：同第 206 题，反转链表的子区间
+  reverseLinkedList(leftNode);
+
+  // 第 5 步：接回到原来的链表中
+  pre.next = rightNode;
+  leftNode.next = curr;
+  return dummyNode.next;
+};
+
+const reverseLinkedList = (head) => {
+  let pre = null;
+  let cur = head;
+
+  while (cur) {
+    const next = cur.next;
+    cur.next = pre;
+    pre = cur;
+    cur = next;
+  }
+};
+```
+
+### 删除链表的倒数第 N 个结点
+
+[19. 删除链表的倒数第 N 个结点 - 力扣（LeetCode）](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/?envType=study-plan-v2&envId=top-interview-150)
+
+思路不难，但是一开始没有思考清楚情况，所以还是导致写的时候出现了问题
+
+删除倒数第 n 个节点，我们知道如何找到第 n 个节点
+
+双指针，fast 先走 n 步，然后一起走，fast 走到尽头，那么 slow 就是倒数的第 n 个节点
+
+![](assets\删除链表的倒数第 N 个结点.jpeg)
+
+我在写的时候粗心了，想着要删除的是 slow 节点，那我让 slow 变为删除节点前一个就可以了，就让 fast 不走到链表结尾，而是链表结尾的前一个就好了，但实际写的时候会报错
+
+我忽略了一个操作，可以让 slow 不从 head 开始遍历，而是像 dummy 一样，在 head 的前一位开始遍历。由于多了一位，所以当 fast 为 null 的时候，slow 刚好在删除节点的前一位
+
+然后删除，我也处理得不好，一开始让`slow.next = fast`这个判断是错误的，fast 不一定是删除节点的下一个数，我被题的图片绕进去了。
+
+如果 n 很大，那么 slow 和 fast 就差了 n 个数，很多很多个数，我们只删除一个，那其余的数都被忽略了，所以正确做法是`slow.next = slow.next.next`
+
+```js
+var removeNthFromEnd = function (head, n) {
+  const dummy = new ListNode(-1);
+  dummy.next = head;
+
+  let slow = dummy,
+    fast = head;
+  while (n--) {
+    fast = fast.next;
+  }
+  while (fast !== null) {
+    fast = fast.next;
+    slow = slow.next;
+  }
+  slow.next = slow.next.next;
+  return dummy.next;
 };
 ```
