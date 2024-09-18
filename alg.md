@@ -824,6 +824,45 @@ var wordPattern = function (s, t) {
 };
 ```
 
+### 最长连续序列
+
+[128. 最长连续序列 - 力扣（LeetCode）](https://leetcode.cn/problems/longest-consecutive-sequence/?envType=study-plan-v2&envId=top-interview-150)
+
+这道题其实挺有意思的，我一开始的思路是，使用 map，记录当前数和当前数 -/+ 1，然后遍历的过程中遇到当前值在 map 中已经有了，说明是连续的数，给它加一下。但实际操作过程中很不好写
+
+下面正确代码方法很不错，使用 set 而不是 map，并且不关心-1，只关心+1，一次遍历就能解决
+
+```js
+var longestConsecutive = function (nums) {
+  // 转化成哈希集合，方便快速查找是否存在某个元素
+  let set = new Set();
+  for (let num of nums) {
+    set.add(num);
+  }
+
+  let res = 0;
+
+  for (let num of set) {
+    if (set.has(num - 1)) {
+      // num 不是连续子序列的第一个，跳过
+      continue;
+    }
+    // num 是连续子序列的第一个，开始向上计算连续子序列的长度
+    let curNum = num;
+    let curLen = 1;
+
+    while (set.has(curNum + 1)) {
+      curNum += 1;
+      curLen += 1;
+    }
+    // 更新最长连续序列的长度
+    res = Math.max(res, curLen);
+  }
+
+  return res;
+};
+```
+
 ## 模拟
 
 ### 比较版本号
@@ -896,6 +935,41 @@ var candy = function (ratings) {
   for (const key in left) {
     res += Math.max(left[key], right[key]);
   }
+  return res;
+};
+```
+
+### 合并区间
+
+[56. 合并区间 - 力扣（LeetCode）](https://leetcode.cn/problems/merge-intervals/description/?envType=study-plan-v2&envId=top-interview-150)
+
+这种区间题基本就都是排序
+
+![](assets\合并区间1.jpg)
+
+排序完之后，找第一段区间的右值和第二段区间的左值做对比，如果大于，那说明区间可以延续
+
+![](assets\合并区间2.jpg)
+
+需要注意的是，有可能第二段区间比第一段区间还小，所以需要判断下两段区间的右值大小
+
+```js
+var merge = function (intervals) {
+  intervals.sort((a, b) => a[0] - b[0]);
+
+  let res = [];
+  res.push(intervals[0]);
+
+  for (let i = 1; i < intervals.length; i++) {
+    const curr = intervals[i];
+    let last = res[res.length - 1];
+    if (curr[0] <= last[1]) {
+      last[1] = Math.max(last[1], curr[1]);
+    } else {
+      res.push(curr);
+    }
+  }
+
   return res;
 };
 ```
@@ -1256,5 +1330,27 @@ var removeNthFromEnd = function (head, n) {
   }
   slow.next = slow.next.next;
   return dummy.next;
+};
+```
+
+## 二叉树
+
+### 对称二叉树
+
+[101. 对称二叉树 - 力扣（LeetCode）](https://leetcode.cn/problems/symmetric-tree/?envType=study-plan-v2&envId=top-interview-150)
+
+仿佛回到大二的时候，福利题了属于是
+
+题很简单，就记住，二叉树遍历是为了干什么？什么情况下结束遍历(base case 是什么)？
+
+```js
+var isSymmetric = function (root) {
+  return root && traverse(root.left, root.right);
+};
+
+const traverse = (left, right) => {
+  if (!left && !right) return true;
+  if (!left || !right || left.val !== right.val) return false;
+  return traverse(left.left, right.right) && traverse(left.right, right.left);
 };
 ```
