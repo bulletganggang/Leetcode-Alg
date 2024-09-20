@@ -974,6 +974,41 @@ var merge = function (intervals) {
 };
 ```
 
+### 左边小右边大的数
+
+原来这个就是低配版接雨水 o.0
+
+判断一个数组是否有一个元素，左侧元素都比它小，右侧元素都比它大，返回布尔值
+
+我的想法是，从前到后遍历，用数组记下当前遍历过的最大值。从后向前遍历，用数组记下当前遍历过的最小值。
+
+那么一个数，要满足左边小，右边大，就要比当前下标的最大值数组的值大/=，就说明你大于左边。比当前下标的最小值数组的值小/=，就说明你小于右边。
+
+```js
+const arr = [1, 2, 3, 1, 2, 0, 5, 6];
+
+const isOk = (arr) => {
+  let maxArr = [],
+    minArr = [];
+  maxArr.push(arr[0]);
+  minArr[arr.length - 1] = arr.at(-1);
+  for (let i = 1; i < arr.length; i++) {
+    const value = arr[i];
+    maxArr.push(value > maxArr[i - 1] ? value : maxArr[i - 1]);
+  }
+  for (let i = arr.length - 2; i >= 0; i--) {
+    const value = arr[i];
+    minArr[i] = value < minArr[i + 1] ? value : minArr[i + 1];
+  }
+  for (const key in arr) {
+    if (arr[key] >= maxArr[key] && arr[key] <= minArr[key]) {
+      return true;
+    }
+  }
+  return false;
+};
+```
+
 # 数据结构
 
 ## 栈
