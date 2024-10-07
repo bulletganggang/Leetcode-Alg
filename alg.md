@@ -1009,6 +1009,136 @@ const isOk = (arr) => {
 };
 ```
 
+## 动态规划
+
+### 自顶向下
+
+#### 零钱兑换
+
+[322. 零钱兑换 - 力扣（LeetCode）](https://leetcode.cn/problems/coin-change/)
+
+经典题目了属于是，这个就是自顶向下的做法，需要注意的是获取最小值，而不是可能的所有值，所以要用 min
+
+**dp[amout] = min(dp[amout -5] , dp[amout -3] , dp[amout -2])**
+
+我们可以用 5 组成，也可以用 3 和 2 组成，有多种解法
+
+```js
+var coinChange = function (coins, amount) {
+  const dp = [0];
+  for (let i = 1; i <= amount; i++) {
+    dp[i] = Infinity;
+  }
+  for (let i = 1; i <= amount; i++) {
+    for (const val of coins) {
+      if (i >= val) {
+        dp[i] = Math.min(dp[i], dp[i - val] + 1);
+      }
+    }
+  }
+  return dp[amount] === Infinity ? -1 : dp[amount];
+};
+```
+
+#### 爬楼梯
+
+[70. 爬楼梯 - 力扣（LeetCode）](https://leetcode.cn/problems/climbing-stairs/description/)
+
+其实感觉这种题目都挺类似的，比如爬楼梯，能爬 1 或 2 楼，那么当前可能的爬楼梯数就是
+
+**dp[i] = dp[i-1] + dp[i-2]**
+
+因为我们不知道你当前的这一步，是**从前两个楼梯跨两步**上来的，还是**从前一个楼梯跨一步**上来的，那么就都拿来对比一下
+
+```js
+var climbStairs = function (n) {
+  const dp = [0, 1, 2];
+  for (let i = 3; i <= n; i++) {
+    dp[i] = dp[i - 1] + dp[i - 2];
+  }
+  return dp[n];
+};
+```
+
+#### 不同路径
+
+[62. 不同路径 - 力扣（LeetCode）](https://leetcode.cn/problems/unique-paths/?envType=study-plan-v2&envId=dynamic-programming)
+
+越做感觉越相近，只能**往下走或者往右走**，那么到我当前的这个位置，是不是就是我的**左边+上边**的所有可能性
+
+`dp[i][j] = dp[i - 1][j] + dp[i][j - 1]`
+
+这些都是自顶向下的，分析源头，当前的可以由什么什么组成，专业点的话就叫做**分解子问题**
+
+```js
+var uniquePaths = function (m, n) {
+  const dp = Array(m + 1);
+  for (let i = 0; i <= m; i++) {
+    dp[i] = [];
+  }
+  for (let i = 0; i <= m; i++) {
+    dp[i][0] = 1;
+  }
+  for (let i = 0; i <= n; i++) {
+    dp[0][i] = 1;
+  }
+  for (let i = 1; i <= m; i++) {
+    for (let j = 1; j < n; j++) {
+      dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+    }
+  }
+  return dp[m - 1][n - 1];
+};
+```
+
+### 01 背包
+
+#### 打家劫舍
+
+[198. 打家劫舍 - 力扣（LeetCode）](https://leetcode.cn/problems/house-robber/?envType=study-plan-v2&envId=dynamic-programming)
+
+我对 01 背包的理解是，0101，要么 0 要么 1，只能选择一个，所以就是选 or 不选的问题
+
+打家劫舍还算是简单好理解的，核心方程如下
+
+**dp[i] = Math.max(dp[i - 1], dp[i - 2] + nums[i]);**
+
+两种选择嘛，要么抢要么不抢
+
+- 你要是抢的话，那么隔壁的你就不能抢了，那就是**dp[i - 2] + nums[i]**
+- 你要是不抢，那么就把隔壁的拿过来用，因为可能我们不抢这家，是因为上一家的钱更多更值
+
+并且由于求抢得到的最大值，所以要用个 max 来比较，每次都只存储当前的最大值
+
+```js
+var rob = function (nums) {
+  const len = nums.length;
+  if (!len) return 0;
+  if (len === 1) return nums[0];
+  const dp = [];
+  dp[0] = nums[0];
+  dp[1] = Math.max(nums[1], dp[0]);
+  for (let i = 2; i < len; i++) {
+    dp[i] = Math.max(dp[i - 1], dp[i - 2] + nums[i]);
+  }
+  return dp[len - 1];
+};
+```
+
+突然发现，这问题好像也能算是个自顶向下的问题
+
+如果我们不抢的话，我们当前所能抢的到的最多的钱，就是**0 ~ i-1 范围**内能抢到的最大的钱
+
+**dp[i] = dp(0, i - 1);**
+
+如果我们抢的话，我们当前所能抢的到的最多的钱，就是**0 ~ i-2 范围**内能抢到的最大的钱 + **当前抢的钱**
+
+**dp[i] = dp(0, i - 2) + nums[i];**
+
+所以其实还是分解了子问题，只不过我们不用递归写法，使用了**备忘录**进行了优化，所以看起来才是上面那一种
+
+好神奇，怎么感觉要长脑子了
+
 # 数据结构
 
 ## 栈
