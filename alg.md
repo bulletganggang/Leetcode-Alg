@@ -1498,6 +1498,35 @@ var removeNthFromEnd = function (head, n) {
 };
 ```
 
+### 删除排序链表中的重复元素 II
+
+[82. 删除排序链表中的重复元素 II - 力扣（LeetCode）](https://leetcode.cn/problems/remove-duplicates-from-sorted-list-ii/description/?envType=study-plan-v2&envId=top-interview-150)
+
+感觉链表和数组的思想非常类似，如果觉得链表的思想不好解决，就放在数组中，**想想数组会怎么做**，不过链表中的操作和数组肯定也是不一样的，需要注意
+
+```js
+var deleteDuplicates = function (head) {
+  if (!head) {
+    return head;
+  }
+
+  const dummy = new ListNode(0, head);
+
+  let cur = dummy;
+  while (cur.next && cur.next.next) {
+    if (cur.next.val === cur.next.next.val) {
+      const x = cur.next.val;
+      while (cur.next && cur.next.val === x) {
+        cur.next = cur.next.next;
+      }
+    } else {
+      cur = cur.next;
+    }
+  }
+  return dummy.next;
+};
+```
+
 ## 二叉树
 
 ### 对称二叉树
